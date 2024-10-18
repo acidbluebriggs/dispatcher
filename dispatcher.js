@@ -85,9 +85,9 @@ export class Dispatcher {
    * dispatcher in case a caller wishes to expose this property to be used in the {@link waitFor} method.
    */
   register(callback) {
-    let token = this._register(callback);
+    const token = this._register(callback);
 
-    let a = () => this._unregister(token);
+    const a = () => this._unregister(token);
 
     a.dispatchToken = token;
 
@@ -110,13 +110,13 @@ export class Dispatcher {
    */
   registerCallback(event, callback){
 
-    let token = this._register((payload) => {
+    const token = this._register((payload) => {
       if (payload.actionType === event) {
         callback(payload.actionType, payload.value);
       }
     });
 
-    let a = () => this._unregister(token);
+    const a = () => this._unregister(token);
     a.dispatchToken = token;
     return a;
   }
@@ -142,13 +142,13 @@ export class Dispatcher {
    */
   registerArgs(...args) {
 
-    let events = new Map();
+    const events = new Map();
 
     args.forEach((arg) => {
       events.set(...arg)
     });
 
-    let token = this._register((payload) => {
+    const token = this._register((payload) => {
       let handler = events.get(payload.actionType);
 
       if (!handler) return;
@@ -156,7 +156,7 @@ export class Dispatcher {
       handler(payload.actionType, payload.value);
     });
 
-    let a = () => this._unregister(token);
+    const a = () => this._unregister(token);
 
     a.dispatchToken = token;
 
@@ -181,7 +181,7 @@ export class Dispatcher {
     });
 
     try {
-      for (var id in this._callbacks) {
+      for (let id in this._callbacks) {
         if (this._isPending[id]) {
           continue;
         }
@@ -208,8 +208,8 @@ export class Dispatcher {
 
     let ids = tokens.map(id => id.dispatchToken || id);
 
-    for (var ii = 0; ii < ids.length; ii++) {
-      var id = ids[ii];
+    for (let ii = 0; ii < ids.length; ii++) {
+      const id = ids[ii];
       if (this._isPending[id]) {
         invariant(
           this._isHandled[id],
@@ -234,7 +234,7 @@ export class Dispatcher {
    * a token that can be used with `waitFor()`.
    */
   _register(callback) {
-    var id = _prefix + this._lastID++;
+    const id = _prefix + this._lastID++;
     this._callbacks[id] = callback;
     return id;
   }
@@ -242,7 +242,7 @@ export class Dispatcher {
   /**
    * Removes a callback based on its token.
    */
-  _unregister(id): void {
+  _unregister(id) {
     invariant(
       this._callbacks[id],
       'Dispatcher.unregister(...): `%s` does not map to a registered callback.',
@@ -254,7 +254,7 @@ export class Dispatcher {
   /**
    * Is this Dispatcher currently dispatching.
    */
-  isDispatching(): boolean {
+  isDispatching() {
     return this._isDispatching;
   }
 
@@ -264,7 +264,7 @@ export class Dispatcher {
    *
    * @internal
    */
-  _invokeCallback(id): void {
+  _invokeCallback(id) {
     this._isPending[id] = true;
     this._callbacks[id](this._pendingPayload);
     this._isHandled[id] = true;
@@ -275,8 +275,8 @@ export class Dispatcher {
    *
    * @internal
    */
-  _startDispatching(payload): void {
-    for (var id in this._callbacks) {
+  _startDispatching(payload) {
+    for (let id in this._callbacks) {
       this._isPending[id] = false;
       this._isHandled[id] = false;
     }
@@ -289,7 +289,7 @@ export class Dispatcher {
    *
    * @internal
    */
-  _stopDispatching(): void {
+  _stopDispatching() {
     delete this._pendingPayload;
     this._isDispatching = false;
   }
